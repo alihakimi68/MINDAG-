@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+
+    <title>Date and Time Input</title>
+	
+</head>
+<body>
+	<div style="width:50%float:right">
+		<h1>Enter Start Date and Time</h1>
+			<form id="dateForm">
+				<label for="pickFromDate">Start Date:</label>
+				<input type="date" id="pickFromDate" name="pickFromDate"><br><br>
+
+				<label for="pickFromTIme">Start Time:</label>
+				<input type="time" id="pickFromTIme" name="pickFromTIme"><br><br>
+
+				<h1>Enter End Time</h1>
+				<!-- <label for="pickToDate">End Date:</label>
+				<input type="date" id="pickToDate" name="pickToDate"><br><br> -->
+
+				<label for="pickToTime">End Time:</label>
+				<input type="time" id="pickToTime" name="pickToTime"><br><br>
+
+				<input type="submit" value="Submit">
+			</form>
+	</div>
+	<h1>Event Data</h1>
+    <div style="width:50%float:left" id="eventList"></div>
+	
+	
+	<div style="width:50%float:left" id="eventCategoriesList"></div>
+	<script type="module" src="app.js"></script>
+    
+</body>
+</html>
