@@ -35,7 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const displayEvents = (data) => {
-        eventList.innerHTML = '<h2>Events:</h2>';
         eventCategoriesList.innerHTML = '<h2>Event Categories:</h2>'; // Initialize the list for event categories
 
         const ul = document.createElement('ul');
@@ -66,33 +65,13 @@ document.addEventListener("DOMContentLoaded", function () {
             ul.appendChild(li);
         }
 
-
-		/* // Create a select element to display event categories
-		const categoriesSelect = document.createElement('select');
-		categoriesSelect.multiple = true; // Set the 'multiple' attribute
-		eventCategoriesList.appendChild(categoriesSelect);
-
-		// Add an initial option for selecting categories
-		const initialOption = document.createElement('option');
-		initialOption.value = '';
-		initialOption.textContent = 'Select a category';
-		categoriesSelect.appendChild(initialOption); */
-		
-		
 		// Create a container div to hold the checkboxes
 		const categoriesContainer = document.createElement('div');
 		eventCategoriesList.appendChild(categoriesContainer);
-		
 
-        /* eventList.appendChild(ul); */
-        // Display the unique event categories to the user
-        /* const categoriesUl = document.createElement('ul'); */
+
         eventCategories.forEach(category => {
-            /* const li = document.createElement('li');
-            li.textContent = category;
-            categoriesUl.appendChild(li); */
-			
-			
+
 			const categoriesSelect = document.createElement('input');
 			categoriesSelect.type = 'checkbox';
 			categoriesSelect.value = category;
@@ -103,8 +82,9 @@ document.addEventListener("DOMContentLoaded", function () {
 			categoriesContainer.appendChild(categoriesSelect);
 			categoriesContainer.appendChild(label);
 
-			
-			
+            // Add a line break to separate each checkbox and label pair
+            categoriesContainer.appendChild(document.createElement('br'));
+
         });
     };
 
