@@ -21,19 +21,26 @@
 				<input type="date" id="pickFromDate" name="pickFromDate"><br><br>
 				<label for="pickFromTIme">Start Time:</label>
 				<input type="time" id="pickFromTIme" name="pickFromTIme"><br><br>
-				<!-- <label for="pickToDate">End Date:</label>
-				<input type="date" id="pickToDate" name="pickToDate"><br><br> -->
 
 				<label for="pickToTime">End Time:</label>
 				<input type="time" id="pickToTime" name="pickToTime"><br><br>
 
+				<label for="pickLocation">Your Location</label>
+				<input type="number" step="any" id="PickLat" name="PickLat"><input type="number" step="any" id="PickLng" name="PickLng"><br><br>
+				<span>you can select anywhere on the map</span></br>
+
 				<input type="submit" value="Submit">
 			</form>
 		<h2>Event Data</h2>
+
 		<div id="eventList"></div>
 
 
-		<div id="eventCategoriesList"></div>
+		<div id="eventCategoriesList">
+
+
+
+		</div>
 	</div>
 	<div style="width:70%;float:right;height:400px" id="map">
 		<!--Map goes here-->
