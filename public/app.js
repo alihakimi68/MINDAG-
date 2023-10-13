@@ -5,9 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     /* const toDateInput = document.getElementById("pickToDate"); */
     const toTimeInput = document.getElementById("pickToTime");
     const eventList = document.getElementById("eventList");
-    const eventCategoriesList = document.getElementById("eventCategoriesList"); // Add a DOM element to display event categories
-
-
+    const eventCategoriesList = document.getElementById("eventCategoriesList");
     const fetchEvents = async() => {
         const fromDate = fromDateInput.value;
         const fromTime = fromTimeInput.value;
@@ -34,18 +32,18 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
+    //    Display a list of events catergory for user to select //
     const displayEvents = (data) => {
+		
         eventCategoriesList.innerHTML = '<h2>Event Categories:</h2>'; // Initialize the list for event categories
-
-        const ul = document.createElement('ul');
+        
         const eventCategories = []; // Create an array to store unique event categories
+        const eventID = [];
 
         if (data && Array.isArray(data.items)) {
             data.items.forEach(event => {
-                const li = document.createElement('li');
-                li.textContent = event.eventAddress + '(' + event.mapCoordinates.lat + ',' + event.mapCoordinates.lng + ')' + event.eventCategory; // Display the event address (customize as needed)
-                ul.appendChild(li);
-				
+                
+				const categoriesID = event._id
 				const categories = event.eventCategory
 				categories.forEach(cat =>{
 					if (typeof cat === 'string') {
@@ -53,22 +51,21 @@ document.addEventListener("DOMContentLoaded", function () {
 						// Iterate through the categories and add them individually
 						if (!eventCategories.includes(cat.trim())) {
 						  eventCategories.push(cat.trim());
+						  eventID.push(categoriesID);
 						}
 					}	
 				})
-				
+				console.log(eventID)
+
             });
         } else {
             // Handle the case where 'items' is not an array or is missing (e.g., display an error message)
-            const li = document.createElement('li');
-            li.textContent = 'No events found'; // Customize this error message
-            ul.appendChild(li);
+
         }
 
 		// Create a container div to hold the checkboxes
 		const categoriesContainer = document.createElement('div');
 		eventCategoriesList.appendChild(categoriesContainer);
-
 
         eventCategories.forEach(category => {
 
@@ -94,3 +91,40 @@ document.addEventListener("DOMContentLoaded", function () {
         fetchEvents();
     });
 });
+
+
+
+
+/* Load the Map */
+
+// Initialize the map centered on Lund
+const map = L.map('map').setView([55.7047, 13.1910], 14); // Center the map on Lund and set an appropriate zoom level
+
+// Add a base layer (you can use other tile layers as well)
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+// Specify the origin and destination points
+const origin = L.latLng(55.7047, 13.1910); // Lund coordinates
+const destination = L.latLng(55.7033, 13.1944); // Example destination coordinates
+const destination1 = L.latLng(55.7055, 13.1920); // Example destination coordinates
+
+
+// Create markers for the origin and destination
+
+L.marker(origin).addTo(map).bindPopup('Lund');
+L.marker(destination).addTo(map).bindPopup('Destination');
+
+// Create a routing control instance
+const control = L.Routing.control({
+    waypoints: [
+        origin,
+        destination,
+		destination1
+    ],
+    routeWhileDragging: true,
+}).addTo(map);
+
+// Calculate and display the route
+control.route();
