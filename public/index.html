@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-	
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <!-- Include Leaflet Routing Machine CSS and JavaScript -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
     <title>Date and Time Input</title>
 	
 </head>
 <body>
-	<div style="width:50%float:right">
-		<h1>MINDAG</h1>
+	<h1>MINDAG</h1>
+	<div style="width:30%;float:left">
+		
 		<h1>Please select a day and your time of availabitiy</h1>
 			<form id="dateForm">
 				<label for="pickFromDate">Start Date:</label>
@@ -23,13 +29,18 @@
 
 				<input type="submit" value="Submit">
 			</form>
+		<h2>Event Data</h2>
+		<div id="eventList"></div>
+
+
+		<div id="eventCategoriesList"></div>
 	</div>
-	<h1>Event Data</h1>
-    <div style="width:50%float:left" id="eventList"></div>
-	
-	
-	<div style="width:50%float:left" id="eventCategoriesList"></div>
+	<div style="width:70%;float:right;height:400px" id="map">
+		<!--Map goes here-->
+	</div>
+
 	<script type="module" src="app.js"></script>
-    
+	
+
 </body>
 </html>
