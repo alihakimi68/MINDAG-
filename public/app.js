@@ -1,30 +1,41 @@
+
+//Global variables
+let PickLatValue;
+let PickLonValue;
+
 document.addEventListener("DOMContentLoaded", function () {
     const apiKey = '35a4bdb07a454d9b9bedcfbe1497e315';
     const fromDateInput = document.getElementById("pickFromDate");
     const fromTimeInput = document.getElementById("pickFromTIme");
-    /* const toDateInput = document.getElementById("pickToDate"); */
     const toTimeInput = document.getElementById("pickToTime");
     const eventList = document.getElementById("eventList");
     const eventCategoriesList = document.getElementById("eventCategoriesList");
+    let eventID = []; // Declare eventID at a higher scope
+    let data = [];
+    let control = null;
+
+    //    read the data based on the user inputs
     const fetchEvents = async() => {
         const fromDate = fromDateInput.value;
         const fromTime = fromTimeInput.value;
-        /* const toDate = toDateInput.value; */
         const toTime = toTimeInput.value;
+        const fromDateTime = new Date(`${fromDate}T${fromTime}`); //convert date and time to the API format
+        const toDateTime = new Date(`${fromDate}T${toTime}`); //convert date and time to the API format
 
-        const fromDateTime = new Date(`${fromDate}T${fromTime}`);
-        const toDateTime = new Date(`${fromDate}T${toTime}`);
-
+        //        Create the Url
         const endpoint = `/proxy/events?apiKey=${apiKey}&fromDate=${fromDateTime.toISOString()}&toDate=${toDateTime.toISOString()}`;
 
+        //        Check if the there are any responses from API Server
         try {
             const response = await fetch(endpoint);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
 
-            const data = await response.json();
-            /* console.log('data',data) */
+            //            The whole data from API
+            data = await response.json();
+
+            // Call display event function
             displayEvents(data);
         } catch (error) {
             console.error(error);
@@ -32,22 +43,28 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
+
+    //    ##################################################### //
     //    Display a list of events catergory for user to select //
+    //    ##################################################### //
     const displayEvents = (data) => {
 		
         eventCategoriesList.innerHTML = '<h2>Event Categories:</h2>'; // Initialize the list for event categories
-        
-        const eventCategories = []; // Create an array to store unique event categories
-        const eventID = [];
 
+        const eventCategories = []; // Create an array to store unique event categories
+        eventID = [];
+
+        //        Check if the categories are an array
         if (data && Array.isArray(data.items)) {
             data.items.forEach(event => {
                 
 				const categoriesID = event._id
 				const categories = event.eventCategory
+
+                //				Create the categories list for the check boxes
 				categories.forEach(cat =>{
 					if (typeof cat === 'string') {
-						/* console.log(cat) */
+
 						// Iterate through the categories and add them individually
 						if (!eventCategories.includes(cat.trim())) {
 						  eventCategories.push(cat.trim());
@@ -55,12 +72,10 @@ document.addEventListener("DOMContentLoaded", function () {
 						}
 					}	
 				})
-				console.log(eventID)
-
             });
         } else {
-            // Handle the case where 'items' is not an array or is missing (e.g., display an error message)
 
+            // Handle the case where 'items' is not an array or is missing (e.g., display an error message)
         }
 
 		// Create a container div to hold the checkboxes
@@ -69,33 +84,150 @@ document.addEventListener("DOMContentLoaded", function () {
 
         eventCategories.forEach(category => {
 
+            //            Check boxes
 			const categoriesSelect = document.createElement('input');
 			categoriesSelect.type = 'checkbox';
 			categoriesSelect.value = category;
-			
+
+            //			labels
 			const label = document.createElement('label');
 			label.textContent = category;
-			
+
+            //			appending the check boxe
 			categoriesContainer.appendChild(categoriesSelect);
 			categoriesContainer.appendChild(label);
 
             // Add a line break to separate each checkbox and label pair
             categoriesContainer.appendChild(document.createElement('br'));
-
         });
+
+        // Create a submit button
+        const submitButton = document.createElement('button');
+        submitButton.textContent = 'Submit';
+        submitButton.addEventListener('click', handleButtonClick); // Add a click event listener
+        eventCategoriesList.appendChild(submitButton);
+
     };
 
+
+    //    ########################################################## //
+    //    sort the categories based on the distance nad show on map  //
+    //    ########################################################## //
+    const handleButtonClick = () => {
+
+        //        Check if the map is populated with layers and remove them
+        map.eachLayer(layer => {
+            if (layer instanceof L.Polyline || layer instanceof L.Marker) {
+                map.removeLayer(layer);
+            }
+        });
+
+        //        Get the selected items from check boxes
+        const selectedCategories = Array.from(eventCategoriesList.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+        const eventsForToday = []
+
+        // Iterate through the data.items and check if their ._id is in the eventID array
+        data.items.forEach(event => {
+
+            if (eventID.includes(event._id)) {
+
+                // Check if the event's category is in the selectedCategories
+                const categories = event.eventCategory;
+                const matchingCategory = categories.find(cat => selectedCategories.includes(cat.trim()));
+                if (matchingCategory) {
+                    eventsForToday.push(event);
+                } else {
+                    console.log('there no events in based on your taste')
+                }
+            }
+        });
+        const eventsForTodayWithoutDuplicates = eventsForToday.filter((event, index, self) => {
+            const eventIndex = self.findIndex(e => e._id === event._id);
+            return eventIndex === index;
+            });
+
+        // Helper function to calculate the distance between two sets of coordinates using the Haversine formula
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in kilometers
+            const dLat = (lat2 - lat1) * (Math.PI / 180);
+            const dLon = (lon2 - lon1) * (Math.PI / 180);
+            const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const distance = R * c;
+            return distance;
+        }
+
+        //            Sor the events by distance to the user location
+        const sortEventsByDistance = (events, targetLat, targetLon) => {
+
+            // Calculate the distance for each event
+            events.forEach(event => {
+                event.distance = calculateDistance(PickLatValue, PickLonValue, event.mapCoordinates.lat, event.mapCoordinates.lng);
+            });
+
+            // Sort events by distance
+            events.sort((a, b) => a.distance - b.distance);
+        };
+
+        //            Keep the sorted events
+        const sortedEvents = [...eventsForTodayWithoutDuplicates]; // Create a copy of the array
+        sortEventsByDistance(sortedEvents, PickLatValue, PickLonValue);
+
+        //            Empty the way points
+//        waypoints.push(L.latLng(PickLatValue, PickLonValue))
+//        console.log(waypoints)
+//        // Iterate through the sortedEvents and add their coordinates to the waypoints
+//        sortedEvents.forEach(event => {
+//            waypoints.push(L.latLng(event.mapCoordinates.lat, event.mapCoordinates.lng).bindPopup(event.name));
+//        });
+        // Create a custom HTML string for the popup content
+        const popupContent = "###################";
+                // Create markers for each event
+        const eventMarkers = sortedEvents.map(event => {
+            const marker = L.marker([event.mapCoordinates.lat, event.mapCoordinates.lng])
+                .bindPopup(popupContent);
+
+            // Add a click event listener to open the popup on marker click
+            marker.on('click', function () {
+                this.openPopup();
+            });
+
+            return marker;
+        });
+
+        // Create an array of waypoints with the user's location and event markers
+        const waypoints = [L.latLng(PickLatValue, PickLonValue)]; // Start with the user's location
+
+        eventMarkers.forEach(eventMarker => {
+            waypoints.push(eventMarker.getLatLng()); // Add the event marker's coordinates
+        });
+
+        // Create a routing control instance with the calculated waypoints
+        if (control != null) {
+            control = null;
+        } else {
+            control = L.Routing.control({
+                waypoints: waypoints, // Use the waypoints array
+                routeWhileDragging: true,
+            }).addTo(map);
+
+            // Calculate and display the route
+            control.route();
+        }
+    };
+
+
+    //    ################################ //
+    //    Main submit button of the form  //
+    //    ################################ //
     const form = document.getElementById("dateForm");
     form.addEventListener("submit", function (e) {
         e.preventDefault();
         fetchEvents();
     });
 });
-
-
-
-
-/* Load the Map */
 
 // Initialize the map centered on Lund
 const map = L.map('map').setView([55.7047, 13.1910], 14); // Center the map on Lund and set an appropriate zoom level
@@ -105,26 +237,24 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-// Specify the origin and destination points
-const origin = L.latLng(55.7047, 13.1910); // Lund coordinates
-const destination = L.latLng(55.7033, 13.1944); // Example destination coordinates
-const destination1 = L.latLng(55.7055, 13.1920); // Example destination coordinates
+// Add a click event listener to the map
+map.on('click', function (e) {
+    // Get the latitude and longitude of the clicked point
+    const userSelectedLat = e.latlng.lat;
+    const userSelectedLon = e.latlng.lng;
+
+    // Now you can use userSelectedLat and userSelectedLon in your handleButtonClick function
+    handleButtonClickOnMapClick (userSelectedLat, userSelectedLon);
+});
+
+//Ge the user location from the click on the map
+const handleButtonClickOnMapClick  = (userSelectedLat, userSelectedLon) => {
+    PickLatValue = userSelectedLat;
+    PickLonValue = userSelectedLon;
+    document.getElementById("PickLat").value = userSelectedLat;
+    document.getElementById("PickLng").value = userSelectedLon;
+};
 
 
-// Create markers for the origin and destination
 
-L.marker(origin).addTo(map).bindPopup('Lund');
-L.marker(destination).addTo(map).bindPopup('Destination');
 
-// Create a routing control instance
-const control = L.Routing.control({
-    waypoints: [
-        origin,
-        destination,
-		destination1
-    ],
-    routeWhileDragging: true,
-}).addTo(map);
-
-// Calculate and display the route
-control.route();
