@@ -3,6 +3,9 @@
 let PickLatValue;
 let PickLonValue;
 
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const apiKey = '35a4bdb07a454d9b9bedcfbe1497e315';
     const fromDateInput = document.getElementById("pickFromDate");
@@ -13,6 +16,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let eventID = []; // Declare eventID at a higher scope
     let data = [];
     let control = null;
+
+
 
     //    read the data based on the user inputs
     const fetchEvents = async() => {
@@ -176,37 +181,39 @@ document.addEventListener("DOMContentLoaded", function () {
         sortEventsByDistance(sortedEvents, PickLatValue, PickLonValue);
 
         //            Empty the way points
-//        waypoints.push(L.latLng(PickLatValue, PickLonValue))
-//        console.log(waypoints)
-//        // Iterate through the sortedEvents and add their coordinates to the waypoints
-//        sortedEvents.forEach(event => {
-//            waypoints.push(L.latLng(event.mapCoordinates.lat, event.mapCoordinates.lng).bindPopup(event.name));
-//        });
+        const waypoints = [];
+        waypoints.push(L.latLng(PickLatValue, PickLonValue))
+        console.log(waypoints)
+        // Iterate through the sortedEvents and add their coordinates to the waypoints
+        sortedEvents.forEach(event => {
+            waypoints.push(L.latLng(event.mapCoordinates.lat, event.mapCoordinates.lng));
+        });
         // Create a custom HTML string for the popup content
-        const popupContent = "###################";
-                // Create markers for each event
-        const eventMarkers = sortedEvents.map(event => {
-            const marker = L.marker([event.mapCoordinates.lat, event.mapCoordinates.lng])
-                .bindPopup(popupContent);
-
-            // Add a click event listener to open the popup on marker click
-            marker.on('click', function () {
-                this.openPopup();
-            });
-
-            return marker;
-        });
-
+//        const popupContent = "###################";
+//                // Create markers for each event
+//        const eventMarkers = sortedEvents.map(event => {
+//            const marker = L.marker([event.mapCoordinates.lat, event.mapCoordinates.lng])
+//                .bindPopup(popupContent);
+//
+//            // Add a click event listener to open the popup on marker click
+//            marker.on('click', function () {
+//                this.openPopup();
+//            });
+//
+//            return marker;
+//        });
+//        console.log(eventMarkers)
         // Create an array of waypoints with the user's location and event markers
-        const waypoints = [L.latLng(PickLatValue, PickLonValue)]; // Start with the user's location
-
-        eventMarkers.forEach(eventMarker => {
-            waypoints.push(eventMarker.getLatLng()); // Add the event marker's coordinates
-        });
-
+//        const waypoints = [L.latLng(PickLatValue, PickLonValue)]; // Start with the user's location
+//        console.log(waypoints)
+//        eventMarkers.forEach(eventMarker => {
+//            waypoints.push(eventMarker.getLatLng()); // Add the event marker's coordinates
+//        });
+//        console.log(waypoints)
         // Create a routing control instance with the calculated waypoints
         if (control != null) {
             control = null;
+
         } else {
             control = L.Routing.control({
                 waypoints: waypoints, // Use the waypoints array
@@ -247,12 +254,25 @@ map.on('click', function (e) {
     handleButtonClickOnMapClick (userSelectedLat, userSelectedLon);
 });
 
+
+// Initialize the coordinatesDiv
+const coordinatesDiv = L.control({ position: 'bottomleft' });
+coordinatesDiv.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'coordinates');
+    this.update();
+    return this._div;
+};
+coordinatesDiv.update = function (lat, lon) {
+    this._div.innerHTML = `<b>Latitude:</b> ${lat}, <b>Longitude:</b> ${lon}`;
+};
+coordinatesDiv.addTo(map);
+
 //Ge the user location from the click on the map
 const handleButtonClickOnMapClick  = (userSelectedLat, userSelectedLon) => {
     PickLatValue = userSelectedLat;
     PickLonValue = userSelectedLon;
-    document.getElementById("PickLat").value = userSelectedLat;
-    document.getElementById("PickLng").value = userSelectedLon;
+
+    coordinatesDiv.update(PickLatValue, PickLonValue);
 };
 
 
