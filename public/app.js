@@ -2,9 +2,7 @@
 //Global variables
 let PickLatValue;
 let PickLonValue;
-
-
-
+let userLocationAvailable = false;
 
 document.addEventListener("DOMContentLoaded", function () {
     const apiKey = '35a4bdb07a454d9b9bedcfbe1497e315';
@@ -16,8 +14,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let eventID = []; // Declare eventID at a higher scope
     let data = [];
     let control = null;
-
-
 
     //    read the data based on the user inputs
     const fetchEvents = async() => {
@@ -182,47 +178,61 @@ document.addEventListener("DOMContentLoaded", function () {
 
         //            Empty the way points
         const waypoints = [];
-        waypoints.push(L.latLng(PickLatValue, PickLonValue))
-        console.log(waypoints)
+        if (PickLatValue && PickLonValue){
+            waypoints.push(L.latLng(PickLatValue, PickLonValue))
+        }
         // Iterate through the sortedEvents and add their coordinates to the waypoints
         sortedEvents.forEach(event => {
             waypoints.push(L.latLng(event.mapCoordinates.lat, event.mapCoordinates.lng));
         });
-        // Create a custom HTML string for the popup content
-//        const popupContent = "###################";
-//                // Create markers for each event
-//        const eventMarkers = sortedEvents.map(event => {
-//            const marker = L.marker([event.mapCoordinates.lat, event.mapCoordinates.lng])
-//                .bindPopup(popupContent);
-//
-//            // Add a click event listener to open the popup on marker click
-//            marker.on('click', function () {
-//                this.openPopup();
-//            });
-//
-//            return marker;
-//        });
-//        console.log(eventMarkers)
-        // Create an array of waypoints with the user's location and event markers
-//        const waypoints = [L.latLng(PickLatValue, PickLonValue)]; // Start with the user's location
-//        console.log(waypoints)
-//        eventMarkers.forEach(eventMarker => {
-//            waypoints.push(eventMarker.getLatLng()); // Add the event marker's coordinates
-//        });
-//        console.log(waypoints)
+        console.log(sortedEvents)
         // Create a routing control instance with the calculated waypoints
         if (control != null) {
+            map.removeControl(control);
             control = null;
-
-        } else {
-            control = L.Routing.control({
+        }
+        control = L.Routing.control({
                 waypoints: waypoints, // Use the waypoints array
                 routeWhileDragging: true,
+                createMarker: function (i, waypoint, n) {
+                    const marker = L.marker(waypoint.latLng, {
+                        draggable: false
+                    });
+                    const event = sortedEvents[i];
+                    console.log(event);
+
+                    let tooltipContent; // Define tooltipContent here
+                    if (!userLocationAvailable) {
+                        const event = sortedEvents[i]; // Use i - 1 to access the corresponding event
+                        tooltipContent = `<div class="tooltip-style"><strong>${event.eventName}</strong></br>
+                            Event Address: ${event.eventAddress}</br></br>
+                            Event Description: ${event.eventDescription}</br>
+                            Email: ${event.eventEmail}</br>
+                            Start Date: ${event.eventStartDate}</br>
+                            End Date: ${event.eventEndDate}</br>
+                            Website: ${event.eventWebsite}</dv>`;
+                    }else if (i === 0 && userLocationAvailable){
+                        tooltipContent = `<strong>Starting Point</strong></br>`;
+                    }
+                    else{
+                        const event = sortedEvents[i - 1]; // Use i - 1 to access the corresponding event
+                        tooltipContent = `<div class="tooltip-style"><strong>${event.eventName}</strong></br>
+                            Event Address: ${event.eventAddress}</br></br>
+                            Event Description: ${event.eventDescription}</br>
+                            Email: ${event.eventEmail}</br>
+                            Start Date: ${event.eventStartDate}</br>
+                            End Date: ${event.eventEndDate}</br>
+                            Website: ${event.eventWebsite}</dv>`;
+                    }
+
+                    marker.bindTooltip(tooltipContent, { direction: 'auto' });
+
+                    return marker;
+                }
             }).addTo(map);
 
             // Calculate and display the route
-            control.route();
-        }
+        control.route();
     };
 
 
@@ -271,8 +281,8 @@ coordinatesDiv.addTo(map);
 const handleButtonClickOnMapClick  = (userSelectedLat, userSelectedLon) => {
     PickLatValue = userSelectedLat;
     PickLonValue = userSelectedLon;
-
     coordinatesDiv.update(PickLatValue, PickLonValue);
+    userLocationAvailable = true;
 };
 
 
