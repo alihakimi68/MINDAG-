@@ -17,33 +17,34 @@
 
 
 <body>
-	<div style="width:25%;float:left">
-		<img src="img/mindag.png" alt="Logo" width="250px" height="100px"/>
+
+	<div style="width:15%;float:left">
+		<img src="img/mindag.png" alt="Logo" width="100%" height="100px" style="background-color:#fff;margin:0px"/>
 		<h2>1. SELECT LOCATION </h2>
+		<div id="locationMessage" class="hidden">You have selected your location</div>
 		<h2>2. SELECT AVAILABILITY</h2>
 
 			<form id="dateForm">
 				<label for="pickFromDate">Your Day:</label>
-				<input type="date" id="pickFromDate" name="pickFromDate">
+				<input type="date" id="pickFromDate" class="pickFromDate" name="pickFromDate"></br>
 				<label for="pickFromTIme">Start Time:</label>
-				<input type="time" id="pickFromTIme" name="pickFromTIme">
-
+				<input type="time" id="pickFromTIme" class="pickFromTIme" name="pickFromTIme"></br>
 				<label for="pickToTime">End Time:</label>
-				<input type="time" id="pickToTime" name="pickToTime"><br><br>
+				<input type="time" id="pickToTime" class="pickToTime" name="pickToTime"><br>
 
-				<input type="submit" value="Submit">
+				<input type="submit" value="Next" class="custom-next-button">
 			</form>
-		<h2> 3. SELECT AVAILABILITY </h2>
+		<h2> 3. SELECT CATEGORIES </h2>
 
-		<div id="eventList"></div>
 		<div id="eventCategoriesList">
-
 
 		</div>
 	</div>
-	<div style="width:75%;float:right;height:800px" id="map">
+	<div style="width:85%;float:right;height:100vh" id="map">
 		<!--Map goes here-->
+
 	</div>
+
 
 	<script type="module" src="app.js"></script>
 	
