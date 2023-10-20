@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 waypoints: waypoints, // Use the waypoints array
                 routeWhileDragging: true,
                 createMarker: function (i, waypoint, n) {
-                    const marker = L.marker(waypoint.latLng, {
+                    var marker = L.marker(waypoint.latLng, {
                         draggable: false
                     });
                     const event = sortedEvents[i];
@@ -212,6 +212,16 @@ document.addEventListener("DOMContentLoaded", function () {
                             End Date: ${event.eventEndDate}</br>
                             Website: ${event.eventWebsite}</dv>`;
                     }else if (i === 0 && userLocationAvailable){
+                        const customIcon = L.icon({
+                        iconUrl: 'img/StartPoint.png', // Replace with the URL to your custom icon image
+                        iconSize: [128, 128], // Set the size of the icon
+                        iconAnchor: [60, 100], // Set the anchor point (center of the icon)
+                        });
+                        marker = L.marker(waypoint.latLng, {
+                            draggable: false,
+                            icon: customIcon, // Apply the custom icon
+                        });
+
                         tooltipContent = `<strong>Starting Point</strong></br>`;
                     }
                     else{
