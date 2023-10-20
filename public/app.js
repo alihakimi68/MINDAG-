@@ -49,8 +49,8 @@ document.addEventListener("DOMContentLoaded", function () {
     //    Display a list of events catergory for user to select //
     //    ##################################################### //
     const displayEvents = (data) => {
-		
-        eventCategoriesList.innerHTML = '<h2>Event Categories:</h2>'; // Initialize the list for event categories
+
+        eventCategoriesList.innerHTML = ''; // Initialize the list for event categories
 
         const eventCategories = []; // Create an array to store unique event categories
         eventID = [];
@@ -81,6 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		// Create a container div to hold the checkboxes
 		const categoriesContainer = document.createElement('div');
+		categoriesContainer.className = "categories-container"
 		eventCategoriesList.appendChild(categoriesContainer);
 
         eventCategories.forEach(category => {
@@ -88,10 +89,12 @@ document.addEventListener("DOMContentLoaded", function () {
             //            Check boxes
 			const categoriesSelect = document.createElement('input');
 			categoriesSelect.type = 'checkbox';
+			categoriesSelect.className = 'catCheckbox'
 			categoriesSelect.value = category;
 
             //			labels
 			const label = document.createElement('label');
+			label.className = 'catLabel'
 			label.textContent = category;
 
             //			appending the check boxe
@@ -105,6 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Create a submit button
         const submitButton = document.createElement('button');
         submitButton.textContent = 'Submit';
+        submitButton.className = "custom-submit-button";
         submitButton.addEventListener('click', handleButtonClick); // Add a click event listener
         eventCategoriesList.appendChild(submitButton);
 
@@ -199,7 +203,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         draggable: false
                     });
                     const event = sortedEvents[i];
-                    console.log(event);
 
                     let tooltipContent; // Define tooltipContent here
                     if (!userLocationAvailable) {
@@ -213,16 +216,16 @@ document.addEventListener("DOMContentLoaded", function () {
                             Website: ${event.eventWebsite}</dv>`;
                     }else if (i === 0 && userLocationAvailable){
                         const customIcon = L.icon({
-                        iconUrl: 'img/StartPoint.png', // Replace with the URL to your custom icon image
+                        iconUrl: 'img/Letsgo.gif', // Replace with the URL to your custom icon image
                         iconSize: [128, 128], // Set the size of the icon
-                        iconAnchor: [60, 100], // Set the anchor point (center of the icon)
+                        iconAnchor: [65, 100], // Set the anchor point (center of the icon)
                         });
                         marker = L.marker(waypoint.latLng, {
                             draggable: false,
                             icon: customIcon, // Apply the custom icon
                         });
 
-                        tooltipContent = `<strong>Starting Point</strong></br>`;
+                        tooltipContent = `<div class="tooltip-start"><img src="img/StartPoint.gif" width="200px" height="100%"></div>`;
                     }
                     else{
                         const event = sortedEvents[i - 1]; // Use i - 1 to access the corresponding event
@@ -293,6 +296,15 @@ const handleButtonClickOnMapClick  = (userSelectedLat, userSelectedLon) => {
     PickLonValue = userSelectedLon;
     coordinatesDiv.update(PickLatValue, PickLonValue);
     userLocationAvailable = true;
+
+    const locationMessage = document.getElementById("locationMessage");
+    locationMessage.style.display = "block";
+
+    // Automatically hide the message after 3 seconds (adjust the time as needed)
+    setTimeout(() => {
+    locationMessage.style.display = "none";
+    }, 1000); // 3000 milliseconds (3 seconds)
+
 };
 
 
