@@ -12,36 +12,36 @@
 	<link rel="stylesheet" type="text/css" href="style.css">
 
     <title>Date and Time Input</title>
-	
 </head>
+
+
+
 <body>
-	<h1>MINDAG</h1>
-	<div style="width:30%;float:left">
-		
-		<h1>Please select a day and your time of availabitiy</h1>
+	<div style="width:25%;float:left">
+		<img src="img/mindag.png" alt="Logo" width="250px" height="100px"/>
+		<h2>1. SELECT LOCATION </h2>
+		<h2>2. SELECT AVAILABILITY</h2>
+
 			<form id="dateForm">
-				<label for="pickFromDate">Start Date:</label>
-				<input type="date" id="pickFromDate" name="pickFromDate"><br><br>
+				<label for="pickFromDate">Your Day:</label>
+				<input type="date" id="pickFromDate" name="pickFromDate">
 				<label for="pickFromTIme">Start Time:</label>
-				<input type="time" id="pickFromTIme" name="pickFromTIme"><br><br>
+				<input type="time" id="pickFromTIme" name="pickFromTIme">
 
 				<label for="pickToTime">End Time:</label>
 				<input type="time" id="pickToTime" name="pickToTime"><br><br>
 
 				<input type="submit" value="Submit">
 			</form>
-		<h2>Event Data</h2>
+		<h2> 3. SELECT AVAILABILITY </h2>
 
 		<div id="eventList"></div>
-
-
 		<div id="eventCategoriesList">
 
-			<span>you can select anywhere on the map</span></br>
 
 		</div>
 	</div>
-	<div style="width:70%;float:right;height:800px" id="map">
+	<div style="width:75%;float:right;height:800px" id="map">
 		<!--Map goes here-->
 	</div>
 

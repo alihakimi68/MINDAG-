@@ -1,3 +1,79 @@
+
+body {
+    background-color: #555;
+    color: #333;
+    font-family: Arial, sans-serif;
+}
+
+/* ######################## SELECT AVAILABILITY ######################## */
+
+h2 {
+    color:  ;
+    text-align:center;
+    margin-top: 0 px;
+    font-family: 'Helvetica', sans-serif; /* Futuristic font of your choice */
+    font-size: 15px;
+    background-color: #555
+}
+
+h1, h2 {
+    color: #fff;
+}
+
+#dateForm {
+    color: #222;
+    background-color: #333
+    margin-top: 0 px;
+    margin-right: 10 px;
+}
+
+.time-picker {
+    display: block;
+    margin-right: 20px;
+}
+
+label {
+    display: inline-block;
+    margin-top: 10px;
+    text-align:center
+}
+
+input[type="date"],
+input[type="time"],
+input[type="submit"] {
+    background-color: #333;
+    border: none;
+    padding: 10px;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+input[type="submit"] {
+    cursor: pointer;
+    background-color: #FA8072;
+    color: #fff;
+    margin: 4px 2px;
+    adding: 15px 32px;
+
+
+}
+/* ######################## Select Categories  ######################## */
+
+
+
+
+.custom-submit-button {
+    cursor: pointer;
+    background-color: #FA8072;
+    color: #fff;
+}
+
+
+
+
+
+
+
 .tooltip-style {
     background-color: #007bff;
     color: white;
