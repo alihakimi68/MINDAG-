@@ -1,19 +1,14 @@
 # Summary
 
-MINDAG is a WebGIS daily planner which quieries the daily events of the municipality, and filter them based on user location, desires and free hours.
-Then it will route to the stops from the closetes events to the furthest.  
+MINDAG is a WebGIS daily planner that retrieves daily events of the municipality, filters them based on user location, preferences, and available time, and then arranges them from nearest to farthest.  
 
 ## How to run
-In the root dolder run the server with GIT bash
-
-node server/server.js
-
-Open the broswer and search : http://localhost:3000
+- Navigate to the root directory and start the server using Git Bash:
+- Type  "node server/server.js"
+- Open your web browser and go to: http://localhost:3000
 
 ## How it works
-
-- Select the date and time that you are free and click next
-- From the categories of the events select the ones that you like the most
-- Click anywehre on the map to give your location to the appliction
-- Click submit
-
+- Choose the date and time when you are available and click "Next."
+- Select your preferred event categories.
+- Click anywhere on the map to provide your location to the application.
+- Click "Submit."
