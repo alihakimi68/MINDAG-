@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const proxy = require('express-http-proxy'); // Import the proxy middleware
+const proxy = require('express-http-proxy');
 
 const port = 3000;
 
@@ -14,7 +14,12 @@ app.get('/', (req, res) => {
 });
 
 // Create a proxy route to forward requests to the external API
-app.use('/proxy', proxy('https://events-api.cruncho.co'));
+app.use('/proxy', proxy('https://events-api.cruncho.co', {
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        // Add any custom headers or options you need for the API requests here
+        return proxyReqOpts;
+    }
+}));
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
