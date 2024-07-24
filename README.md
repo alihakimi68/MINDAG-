@@ -12,3 +12,6 @@ MINDAG is a WebGIS daily planner that retrieves daily events of the municipality
 - Select your preferred event categories.
 - Click anywhere on the map to provide your location to the application.
 - Click "Submit."
+
+![Screenshot](https://github.com/alihakimi68/MINDAG-/blob/3d3a9ce9442849906422c47e6c982a5a99890cbd/image.png)
+
